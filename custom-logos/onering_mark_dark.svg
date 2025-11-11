@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .ring-text {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        fill: #ffffff;
+      }
+    </style>
+  </defs>
+  <circle cx="16" cy="16" r="14" fill="none" stroke="#ffffff" stroke-width="2.5"/>
+  <text x="16" y="22" class="ring-text" text-anchor="middle">O</text>
+</svg>
