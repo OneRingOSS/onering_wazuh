@@ -1,0 +1,62 @@
+# Example Docker Compose Volume Configuration
+# Add these volume mounts to your wazuh.manager service in docker-compose.yml
+
+services:
+  wazuh.manager:
+    image: wazuh/wazuh-manager:4.14.0
+    hostname: wazuh.manager
+    restart: always
+    ports:
+      - "1514:1514"
+      - "1515:1515"
+      - "514:514/udp"    # Syslog port for Android logs
+      - "55000:55000"
+    environment:
+      - INDEXER_URL=https://wazuh.indexer:9200
+      - INDEXER_USERNAME=admin
+      - INDEXER_PASSWORD=SecretPassword
+      - FILEBEAT_SSL_VERIFICATION_MODE=full
+      - SSL_CERTIFICATE_AUTHORITIES=/etc/ssl/root-ca.pem
+      - SSL_CERTIFICATE=/etc/ssl/filebeat.pem
+      - SSL_KEY=/etc/ssl/filebeat.key
+      - API_USERNAME=wazuh-wui
+      - API_PASSWORD=MyS3cr37P450r.*-
+    volumes:
+      # Original volumes (keep these)
+      - wazuh_api_configuration:/var/ossec/api/configuration
+      - wazuh_etc:/var/ossec/etc
+      - wazuh_logs:/var/ossec/logs
+      - wazuh_queue:/var/ossec/queue
+      - wazuh_var_multigroups:/var/ossec/var/multigroups
+      - wazuh_integrations:/var/ossec/integrations
+      - wazuh_active_response:/var/ossec/active-response/bin
+      - wazuh_agentless:/var/ossec/agentless
+      - wazuh_wodles:/var/ossec/wodles
+      - filebeat_etc:/etc/filebeat
+      - filebeat_var:/var/lib/filebeat
+      
+      # Custom configuration files (add these)
+      # Mount from current directory where config files are located
+      - ./ossec.conf:/var/ossec/etc/ossec.conf:ro
+      - ./local_decoder.xml:/var/ossec/etc/decoders/local_decoder.xml:ro
+      - ./local_rules.xml:/var/ossec/etc/rules/local_rules.xml:ro
+
+volumes:
+  wazuh_api_configuration:
+  wazuh_etc:
+  wazuh_logs:
+  wazuh_queue:
+  wazuh_var_multigroups:
+  wazuh_integrations:
+  wazuh_active_response:
+  wazuh_agentless:
+  wazuh_wodles:
+  filebeat_etc:
+  filebeat_var:
+
+# IMPORTANT NOTES:
+# 1. The :ro flag makes the mounts read-only for security
+# 2. Place ossec.conf, local_decoder.xml, and local_rules.xml in the same directory as docker-compose.yml
+# 3. After adding these mounts, restart with: docker-compose down && docker-compose up -d
+# 4. The custom files will override the default configurations inside the container
+
