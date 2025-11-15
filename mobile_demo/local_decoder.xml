@@ -22,8 +22,8 @@
 -->
 
 <decoder name="android_decoder_03">
-  <prematch>PACKAGE_ADDED</prematch>
-  <regex>android\.intent\.action\.PACKAGE_ADDED dat=package:(\S+)</regex>
+  <prematch>BackupManagerService</prematch>
+  <regex offset="after_prematch">Received broadcast Intent { act=android.intent.action.PACKAGE_ADDED dat=package:(\S+) flg</regex>
   <order>package_name</order>
 </decoder>
 
