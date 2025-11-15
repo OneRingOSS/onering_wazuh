@@ -19,9 +19,9 @@
 </group>
 
 <group name="android,package,install">
-  <rule id="100006" level="12">
+  <rule id="100006" level="15">
     <decoded_as>android_decoder_03</decoded_as>
-    <description>Android app installed: $(package_name)</description>
+    <description>Malicions Android app installed: $(package_name)</description>
     <group>android_install,</group>
   </rule>
 </group>
