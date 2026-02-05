@@ -1,360 +1,222 @@
-# OneRingInc Wazuh Dashboard Rebranding Package
+# OneRing Wazuh - Mobile Threat Detection Platform
 
-Hey! This package contains everything you need to rebrand a Wazuh dashboard with OneRingInc branding.
+A Wazuh fork focused on enabling **mobile security monitoring** for Android devices, specifically designed to detect and prevent **elder scam attacks** through real-time app installation monitoring and threat detection.
 
-## What's Included
+## 🎯 Mission
 
-```
-📦 OneRingInc_Wazuh_Rebrand/
-├── 📁 custom-logos/              # All 10 custom logo files
-├── 📄 rebrand_wazuh.sh           # Automated rebranding script
-├── 📄 ONERING_REBRAND_DOCUMENTATION.md  # Complete documentation
-├── 📄 QUICK_REFERENCE.md         # Quick reference guide
-├── 📄 REBRAND_SUMMARY.txt        # Summary overview
-├── 📄 README_FOR_FRIEND.md       # This file
-└── 🐳 wazuh-dashboard-onering.tar (optional) # Pre-rebranded Docker image
-```
+Protect vulnerable populations, particularly elderly users, from mobile-based scams by providing real-time monitoring and alerting of suspicious app installations and activities on Android devices.
 
----
+## 🔍 Overview
 
-## 🚀 Quick Start (3 Options)
+This project extends Wazuh's security monitoring capabilities to Android mobile devices, enabling:
 
-### **Option 1: Use Pre-Built Docker Image** (Easiest - 2 minutes)
+- **Real-time Android app installation monitoring**
+- **Suspicious app detection and alerting**
+- **Syslog-based log collection from Android devices**
+- **Custom decoders and rules for mobile threat detection**
+- **High-severity alerts for potential scam applications**
 
-If you received the Docker image file:
+## ✨ Key Features
 
-```bash
-# 1. Load the image
-docker load -i wazuh-dashboard-onering.tar
+### Mobile Security Monitoring
+- ✅ Monitor Android app installations in real-time
+- ✅ Detect `PACKAGE_ADDED` events via syslog
+- ✅ Custom Wazuh decoders for Android log parsing
+- ✅ High-severity alerts (level 15) for malicious apps
+- ✅ JSON archive logging for comprehensive event tracking
 
-# 2. Tag it properly
-docker tag wazuh-dashboard-onering:latest wazuh/wazuh-dashboard:4.13.0
+### Dashboard Customization
+- ✅ Custom OneRingInc branding for Wazuh Dashboard
+- ✅ Automated rebranding script
+- ✅ Light/dark theme support
+- ✅ Professional "O" ring icon branding
 
-# 3. Start your Wazuh stack
-cd your-wazuh-installation
-docker compose up -d
+### Easy Deployment
+- ✅ Docker-based setup (Wazuh 4.13.0)
+- ✅ Automated configuration scripts
+- ✅ Version-controlled configurations
+- ✅ Comprehensive documentation
 
-# Done! Access at https://localhost:443
-# Username: admin
-# Password: SecretPassword
-```
+## 🚀 Quick Start
 
----
+### Prerequisites
 
-### **Option 2: Run Automated Script** (Easy - 5 minutes)
+- Docker and Docker Compose installed
+- Wazuh 4.13.0 (single-node or multi-node setup)
+- Android device with syslog capability
+- Network connectivity between Android device and Wazuh server
 
-If you already have Wazuh running:
+### Installation
 
-```bash
-# 1. Extract this package
-unzip OneRingInc_Wazuh_Rebrand.zip
-cd OneRingInc_Wazuh_Rebrand
-
-# 2. Run the script
-./rebrand_wazuh.sh
-
-# Or specify your container name:
-./rebrand_wazuh.sh my-wazuh-dashboard-container
-
-# Done! The script does everything automatically
-```
-
-**What the script does:**
-- ✓ Checks prerequisites
-- ✓ Replaces all 25+ logo files
-- ✓ Restarts dashboard
-- ✓ Verifies installation
-- ✓ Shows summary
-
----
-
-### **Option 3: Manual Installation** (Advanced - 15 minutes)
-
-Follow the step-by-step guide in `ONERING_REBRAND_DOCUMENTATION.md`
-
----
-
-## 📋 Requirements
-
-Before you start, make sure you have:
-
-- ✅ Docker installed and running
-- ✅ Wazuh dashboard container running (version 4.13.0 recommended)
-- ✅ Basic terminal/command line knowledge
-- ✅ 5-10 minutes of time
-
-**To check if Wazuh is running:**
-```bash
-docker ps | grep wazuh
-```
-
-You should see containers for:
-- wazuh.manager
-- wazuh.indexer
-- wazuh.dashboard
-
----
-
-## 🎯 What Gets Rebranded
-
-After applying this package, your Wazuh dashboard will have:
-
-✅ **OneRingInc** logo on login page (instead of Wazuh)
-✅ **"O" ring icon** in the corner (instead of "W")
-✅ **OneRingInc** branding in sidebar and header
-✅ **Animated "O" spinner** on loading screens
-✅ **All logos** updated for both light and dark themes
-
-⚠️ **What stays the same:**
-- Menu text labels (these are hardcoded in the plugin)
-- Dashboard functionality (100% same features)
-- Your data and configurations
-
----
-
-## 📖 Detailed Guides
-
-### 1. **Complete Documentation**
-`ONERING_REBRAND_DOCUMENTATION.md` - Everything you need to know:
-- All logo SVG code
-- Step-by-step manual instructions
-- Configuration details
-- Troubleshooting
-- How to restore original branding
-
-### 2. **Quick Reference**
-`QUICK_REFERENCE.md` - Fast lookup:
-- File locations
-- Common commands
-- Quick troubleshooting
-
-### 3. **Summary**
-`REBRAND_SUMMARY.txt` - Overview:
-- What changed
-- File list
-- Checklist
-
----
-
-## 🛠️ Troubleshooting
-
-### Dashboard won't start after rebranding
-
-```bash
-# Check logs
-docker logs your-dashboard-container --tail 50
-
-# Common fix: Restart the container
-docker restart your-dashboard-container
-
-# Wait 30 seconds
-sleep 30
-
-# Try accessing again
-# https://localhost:443
-```
-
-### Logos not showing
-
-```bash
-# Clear browser cache (Ctrl+Shift+R or Cmd+Shift+R)
-# Or open in incognito/private window
-```
-
-### Container name not found
-
-```bash
-# List all containers
-docker ps -a
-
-# Use the exact name:
-./rebrand_wazuh.sh exact-container-name
-```
-
-### Script permission denied
-
-```bash
-# Make script executable
-chmod +x rebrand_wazuh.sh
-
-# Then run it
-./rebrand_wazuh.sh
-```
-
----
-
-## 🔄 How to Restore Original Wazuh Branding
-
-If you want to go back to Wazuh branding:
-
-### Quick Method:
-```bash
-cd your-wazuh-installation
-docker compose up -d --force-recreate wazuh.dashboard
-```
-
-This recreates the container from the original image.
-
-### Or rebuild from scratch:
-```bash
-docker stop wazuh.dashboard
-docker rm wazuh.dashboard
-docker compose up -d
-```
-
----
-
-## 📸 Screenshots / Verification
-
-After rebranding, you should see:
-
-**Login Page:**
-- OneRingInc logo (not Wazuh)
-
-**Dashboard Corner (top-left):**
-- "O" in a circle (not "W")
-
-**Loading Screens:**
-- Animated spinning "O" ring
-
-**Sidebar:**
-- OneRingInc branding
-
-**Light/Dark Themes:**
-- Logos automatically switch colors
-
----
-
-## 🎨 Logo Details
-
-This package includes 10 custom-designed SVG logos:
-
-| File | Size | Purpose |
-|------|------|---------|
-| `logo-light.svg` | 200x40 | Main text logo (light theme) |
-| `logo-dark.svg` | 200x40 | Main text logo (dark theme) |
-| `icon-light.svg` | 32x32 | Ring icon (light theme) |
-| `icon-dark.svg` | 32x32 | Ring icon (dark theme) |
-| `onering_mark_light.svg` | 32x32 | "O" mark (light theme) |
-| `onering_mark_dark.svg` | 32x32 | "O" mark (dark theme) |
-| `onering_full_light.svg` | 240x50 | Full logo + icon (light) |
-| `onering_full_dark.svg` | 240x50 | Full logo + icon (dark) |
-| `spinner_light.svg` | 60x60 | Loading spinner (light) |
-| `spinner_dark.svg` | 60x60 | Loading spinner (dark) |
-
-**Design:**
-- Brand: OneRingInc
-- Icon: Concentric rings / "O" in circle
-- Colors: #2c3e50 (dark), #ffffff (white)
-- Font: System fonts (Apple/Segoe UI/Arial)
-
----
-
-## 💡 Tips
-
-1. **Test in a dev environment first** before applying to production
-2. **Take screenshots** of your setup before rebranding (for comparison)
-3. **Clear browser cache** after rebranding to see changes immediately
-4. **Use incognito mode** to verify without cache issues
-5. **Keep this package** for future installations
-
----
-
-## 📞 Getting Help
-
-If you run into issues:
-
-1. **Check the logs:**
+1. **Clone the repository**
    ```bash
-   docker logs your-dashboard-container --tail 50
+   git clone https://github.com/OneRingOSS/onering_wazuh.git
+   cd onering_wazuh
    ```
 
-2. **Review documentation:**
-   - See `ONERING_REBRAND_DOCUMENTATION.md` for detailed steps
-   - Check `TROUBLESHOOTING` section
-
-3. **Verify container is running:**
+2. **Deploy mobile monitoring configuration**
    ```bash
-   docker ps | grep wazuh
+   cd mobile_demo
+
+   # Copy configuration files to your Wazuh installation
+   cp ossec.conf /path/to/your/wazuh/
+   cp local_decoder.xml /path/to/your/wazuh/
+   cp local_rules.xml /path/to/your/wazuh/
    ```
 
-4. **Try the manual method:**
-   - Follow step-by-step in the documentation
-   - This gives you more control
+3. **Update docker-compose.yml**
 
----
+   Add volume mounts to your Wazuh manager service:
+   ```yaml
+   services:
+     wazuh.manager:
+       volumes:
+         - ./ossec.conf:/var/ossec/etc/ossec.conf:ro
+         - ./local_decoder.xml:/var/ossec/etc/decoders/local_decoder.xml:ro
+         - ./local_rules.xml:/var/ossec/etc/rules/local_rules.xml:ro
+   ```
 
-## 🎯 Quick Command Reference
+4. **Restart Wazuh**
+   ```bash
+   docker-compose down
+   docker-compose up -d
+   ```
+
+5. **Configure Android device**
+
+   Install a syslog app on your Android device and configure:
+   - **Host**: Your Wazuh server IP
+   - **Port**: 514
+   - **Protocol**: UDP
+
+## 📖 Documentation
+
+### Mobile Monitoring
+- [`mobile_demo/docs/QUICK_START.md`](mobile_demo/docs/QUICK_START.md) - Step-by-step setup guide
+- [`mobile_demo/docs/WAZUH_CONFIG_CHANGES.md`](mobile_demo/docs/WAZUH_CONFIG_CHANGES.md) - Detailed configuration documentation
+- [`mobile_demo/docs/CONFIG_SUMMARY.md`](mobile_demo/docs/CONFIG_SUMMARY.md) - Technical configuration summary
+
+### Dashboard Branding
+- [`rebrand_wazuh.sh`](rebrand_wazuh.sh) - Automated dashboard rebranding script
+- [`custom-logos/`](custom-logos/) - OneRingInc logo assets
+
+## 🔧 Configuration Files
+
+### Core Components
+
+| File | Purpose |
+|------|---------|
+| `mobile_demo/ossec.conf` | Main Wazuh configuration with syslog reception |
+| `mobile_demo/local_decoder.xml` | Android log decoder for PACKAGE_ADDED events |
+| `mobile_demo/local_rules.xml` | Alert rules for suspicious app installations |
+| `mobile_demo/forward_logcat_localhost.sh` | Script to forward Android logs |
+
+## 🎨 Dashboard Branding
+
+Rebrand the Wazuh dashboard with OneRingInc branding:
 
 ```bash
-# Run automated rebranding
-./rebrand_wazuh.sh
-
-# Check dashboard status
-docker ps | grep wazuh.dashboard
-
-# View logs
-docker logs wazuh.dashboard --tail 20
-
-# Restart dashboard
-docker restart wazuh.dashboard
-
-# Restore original
-docker compose up -d --force-recreate wazuh.dashboard
-
-# Access dashboard
-# https://localhost:443
-# Username: admin
-# Password: SecretPassword
+./rebrand_wazuh.sh [container-name]
 ```
 
+The script automatically:
+- Replaces 26+ logo files (SVG)
+- Updates login page, sidebar, header, and loading spinners
+- Supports both light and dark themes
+- Restarts the dashboard container
+
+## 🛡️ Use Cases
+
+### Elder Scam Detection
+Monitor elderly users' Android devices for:
+- Installation of known scam applications
+- Suspicious banking or payment apps
+- Fake tech support applications
+- Phishing app installations
+
+### Mobile Security Platform
+Build a comprehensive mobile security solution:
+- Real-time threat detection
+- Centralized monitoring dashboard
+- Alert notifications for caregivers/family
+- Historical analysis of app installations
+
+## 🧪 Testing
+
+Test the mobile monitoring setup:
+
+```bash
+# Send a test Android log
+echo "Received broadcast Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.test.app }" | nc -u -w1 localhost 514
+
+# Check for alerts in Wazuh dashboard
+# Navigate to: Security Events > Discover
+# Filter by: rule.id:100006
+```
+
+## 📊 Alert Levels
+
+| Level | Severity | Description |
+|-------|----------|-------------|
+| 15 | High | Malicious app installation detected |
+| 12 | Medium | Suspicious app installation |
+| 3 | Low | Normal app installation logged |
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit pull requests or open issues for:
+- New mobile threat detection rules
+- Additional Android log decoders
+- Dashboard improvements
+- Documentation enhancements
+
+
+## 🔒 Security Considerations
+
+- **Network Security**: Ensure syslog traffic (UDP 514) is properly firewalled
+- **Data Privacy**: Mobile logs may contain sensitive information - handle appropriately
+- **Authentication**: Use strong credentials for Wazuh dashboard access
+- **Encryption**: Consider VPN or encrypted channels for production deployments
+
+## 📋 System Requirements
+
+- **Server**: 4GB RAM minimum, 8GB recommended
+- **Storage**: 20GB minimum for logs and indices
+- **Network**: Stable connection between Android devices and Wazuh server
+- **Docker**: Version 20.10+ with Docker Compose
+
+## 🗺️ Roadmap
+
+- [ ] Machine learning-based scam app detection
+- [ ] Integration with threat intelligence feeds
+- [ ] Multi-device family monitoring dashboard
+- [ ] SMS and call log monitoring
+- [ ] Automated response actions (app blocking)
+- [ ] Mobile app for caregivers/family alerts
+
+## 📄 License
+
+This project is licensed under the GNU Library General Public License v2.0 (LGPL-2.0).
+See the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built on [Wazuh](https://wazuh.com/) - Open Source Security Platform
+- Inspired by the need to protect vulnerable populations from mobile scams
+- Community contributions and feedback
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/OneRingOSS/onering_wazuh/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/OneRingOSS/onering_wazuh/discussions)
+- **Documentation**: See `mobile_demo/docs/` directory
+
+## 🌟 Project Status
+
+**Active Development** - This project is under active development. Contributions, bug reports, and feature requests are welcome!
+
 ---
 
-## 📦 Package Contents Summary
+**Protecting those who need it most, one device at a time.** 🛡️
 
-- **10 logo files** (SVG format, ~4.5 KB total)
-- **1 automated script** (rebrand_wazuh.sh)
-- **3 documentation files** (complete guide, quick ref, summary)
-- **1 Docker image** (optional, pre-rebranded)
-
-**Total:** Everything needed to rebrand Wazuh to OneRingInc
-
----
-
-## ✅ Installation Checklist
-
-Before sharing with others or presenting:
-
-- [ ] Wazuh dashboard is running
-- [ ] Docker is installed and working
-- [ ] You have terminal/command line access
-- [ ] Package is extracted to a folder
-- [ ] Script has execute permissions (`chmod +x`)
-
-After installation:
-
-- [ ] Login page shows OneRingInc logo
-- [ ] Corner shows "O" not "W"
-- [ ] Loading screens show "O" spinner
-- [ ] Both light and dark themes work
-- [ ] Dashboard is accessible at https://localhost:443
-
----
-
-## 🚀 Ready to Start?
-
-Choose your method:
-
-1. **Super fast?** → Use Option 1 (Docker image)
-2. **Want automation?** → Use Option 2 (Script)
-3. **Want full control?** → Use Option 3 (Manual)
-
-Any questions? Check the documentation files included in this package!
-
----
-
-**Enjoy your OneRingInc branded Wazuh dashboard! 🎉**
-
-Created with ❤️ using Claude Code
-Version: 1.0
-Date: November 8, 2025
+*OneRing Wazuh - Mobile Security for Elder Protection*
