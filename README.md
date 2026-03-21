@@ -123,11 +123,11 @@ adb devices
 #    Press Ctrl+C to stop
 ```
 
-**Keep this terminal running** - it will continuously forward Android logs to Wazuh.
+**Note:** The script monitors logcat and will **automatically exit after detecting the first PACKAGE_ADDED event**. This is by design - you'll need to run it again before each app installation test.
 
 ### Step 5: Test the Detection
 
-**In a new terminal**, install an app on the emulator:
+Install an app on the emulator:
 
 ```bash
 # Option 1: Install any APK
@@ -137,10 +137,13 @@ adb install /path/to/any-app.apk
 # (Just open Play Store in the emulator and install any app)
 ```
 
-**Check the forwarding terminal** - you should see:
+**The forwarding script will detect the event and exit** with:
 ```
-✅ Detected PACKAGE_ADDED event: ...
+✅ Detected PACKAGE_ADDED event, exiting after sending message
+   Package: ...
 ```
+
+**To monitor another installation**, simply run `./mobile_demo/forward_logcat_localhost.sh` again.
 
 ### Step 6: Verify Alerts in Wazuh
 

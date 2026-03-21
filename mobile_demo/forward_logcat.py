@@ -46,9 +46,12 @@ def run_forwarder(dest_host, dest_port, device_id, adb_args=None):
                 try:
                     sock.sendto(out.encode('utf-8'), (dest_host, dest_port))
 
-                    # Log PACKAGE_ADDED events for visibility
+                    # Check if this line contains PACKAGE_ADDED and exit if so
                     if "android.intent.action.PACKAGE_ADDED" in line:
-                        print(f"✅ Detected PACKAGE_ADDED event: {line}")
+                        print(f"✅ Detected PACKAGE_ADDED event, exiting after sending message")
+                        print(f"   Package: {line}")
+                        proc.kill()
+                        return
                 except Exception as e:
                     # Non-fatal, report and continue
                     print(f"UDP send error: {e}", file=sys.stderr)
