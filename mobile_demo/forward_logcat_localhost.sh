@@ -8,13 +8,16 @@ WAZUH_HOST="127.0.0.1"  # Always use localhost
 WAZUH_PORT="514"
 EMULATOR_ID="${1:-emulator-5554}"  # Default to emulator-5554, or use first argument
 
-# Path to the original forward_logcat.py script
-SCRIPT_PATH="/Users/satheesh/Documents/projects/onering-wazuh/mobile-wazuh/logcatudp/test/forward_logcat.py"
+# Get the directory where this script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Path to the forward_logcat.py script (now local to the project)
+SCRIPT_PATH="$SCRIPT_DIR/forward_logcat.py"
 
 # Check if script exists
 if [ ! -f "$SCRIPT_PATH" ]; then
     echo "❌ Error: forward_logcat.py not found at $SCRIPT_PATH"
-    echo "Please update SCRIPT_PATH in this script to point to the correct location."
+    echo "Expected location: mobile_demo/forward_logcat.py"
     exit 1
 fi
 
