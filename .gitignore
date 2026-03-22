@@ -32,3 +32,9 @@ logs/
 tmp/
 temp/
 
+# Test artifacts
+alerts.json
+
+# Backup directories
+mobile_demo/backups/
+

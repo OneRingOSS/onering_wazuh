@@ -174,6 +174,203 @@ docker exec <wazuh-manager-container> tail -f /var/ossec/logs/alerts/alerts.json
 - ✅ **Self-contained setup** - all scripts included
 - ✅ **Docker-based deployment** (Wazuh 4.14.0)
 - ✅ **OneRingInc dashboard branding** (optional)
+- 🌊 **Wave 3: AI-SOC Integration** - Real-time alert forwarding to external threat intelligence platform
+
+---
+
+## 🌊 Wave 3: AI-SOC Integration
+
+Wave 3 enables **outbound alert forwarding** from Wazuh to an external AI-powered Security Operations Center (AI-SOC) for advanced threat analysis and response.
+
+### What is Wave 3?
+
+Wave 3 configures Wazuh's native integration module to automatically forward high-severity mobile threat alerts (rule 100006, level ≥ 8) to an external webhook endpoint in real-time.
+
+### Architecture
+
+```
+Android Device → Wazuh Manager → AI-SOC Platform
+                      ↓
+                 Local Dashboard
+```
+
+**Flow:**
+1. Android app installation detected
+2. Wazuh triggers rule 100006 (level 15)
+3. Alert logged to `alerts.json` (existing behavior)
+4. **NEW:** Alert forwarded to AI-SOC webhook via HTTP POST
+5. AI-SOC performs advanced threat analysis
+6. Results displayed in AI-SOC dashboard
+
+### Configuration
+
+Wave 3 is **pre-configured** in `mobile_demo/ossec.conf`:
+
+```xml
+<integration>
+  <name>custom-webhook</name>
+  <hook_url>http://host.docker.internal:8000/api/threats/ingest/wazuh</hook_url>
+  <level>8</level>
+  <rule_id>100006</rule_id>
+  <alert_format>json</alert_format>
+</integration>
+```
+
+**Configuration Details:**
+- **Endpoint:** `http://host.docker.internal:8000/api/threats/ingest/wazuh`
+- **Filter:** Rule 100006 AND level ≥ 8
+- **Format:** JSON (Wazuh alert format)
+- **Method:** HTTP POST
+- **Timing:** Real-time (non-blocking)
+
+### Testing Wave 3 Integration
+
+#### **Option 1: End-to-End Integration Test (Recommended)**
+
+This test includes a mock AI-SOC endpoint and validates the complete flow:
+
+```bash
+./mobile_demo/test_wave3_e2e.sh
+```
+
+**What it does:**
+1. ✅ Starts a mock AI-SOC endpoint on port 8000
+2. ✅ Sends a test alert to Wazuh
+3. ✅ Verifies alert appears in Wazuh
+4. ✅ Confirms integration forwards alert to mock endpoint
+5. ✅ Validates alert payload structure
+6. ✅ Cleans up automatically
+
+**Expected output:**
+```
+🧪 Wave 3 End-to-End Integration Test
+=====================================
+
+Test 1: Prerequisites
+✅ PASS: Wazuh Manager container is running
+✅ PASS: Python 3 is available
+✅ PASS: netcat is available
+
+Test 2: Mock AI-SOC Endpoint
+✅ PASS: Mock AI-SOC endpoint started
+✅ PASS: Mock endpoint health check successful
+
+Test 3-8: [All tests pass]
+
+=================================
+Tests Passed: 14
+Tests Failed: 0
+=================================
+✅ All tests passed!
+```
+
+---
+
+#### **Option 2: Manual Testing with Real AI-SOC**
+
+If you have the AI-SOC service running:
+
+```bash
+# 1. Ensure AI-SOC is running
+docker ps | grep ai-soc
+
+# 2. Generate a test alert
+echo "BackupManagerService: Received broadcast Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.test.wave3 flg=0x4000010 (has extras) }" | nc -u -w1 localhost 514
+
+# 3. Check Wazuh integration logs
+docker exec <wazuh-manager> tail -f /var/ossec/logs/integrations.log
+
+# 4. Verify alert in AI-SOC dashboard
+# (Check AI-SOC UI for incoming alert)
+```
+
+---
+
+#### **Option 3: Manual Testing with Mock Endpoint**
+
+Start the mock endpoint manually for debugging:
+
+```bash
+# Terminal 1: Start mock AI-SOC endpoint
+python3 mobile_demo/mock_ai_soc_endpoint.py
+
+# Terminal 2: Send test alert
+echo "BackupManagerService: Received broadcast Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.test.wave3 flg=0x4000010 (has extras) }" | nc -u -w1 localhost 514
+
+# Terminal 3: Check integration logs
+docker exec <wazuh-manager> tail -f /var/ossec/logs/integrations.log
+
+# View received alerts
+curl http://localhost:8000/alerts | python3 -m json.tool
+```
+
+### Network Configuration
+
+**Docker Networking:**
+
+If AI-SOC is running on the **host machine**:
+- ✅ Use `http://host.docker.internal:8000` (already configured)
+
+If AI-SOC is in a **separate Docker container**:
+- Update `hook_url` to use container name: `http://ai-soc:8000/api/threats/ingest/wazuh`
+- Ensure both containers are on the same Docker network
+
+If AI-SOC is on a **remote server**:
+- Update `hook_url` to: `http://<ai-soc-ip>:8000/api/threats/ingest/wazuh`
+- Ensure firewall allows outbound HTTP from Wazuh
+
+### Troubleshooting Wave 3
+
+**Issue: Alerts not reaching AI-SOC**
+
+```bash
+# Check integration logs
+docker exec <wazuh-manager> tail -50 /var/ossec/logs/integrations.log
+
+# Test connectivity from Wazuh container
+docker exec <wazuh-manager> curl -v http://host.docker.internal:8000/api/threats/ingest/wazuh
+
+# Verify integration is enabled
+docker exec <wazuh-manager> grep -A 6 "<integration>" /var/ossec/etc/ossec.conf
+```
+
+**Issue: Connection refused**
+
+- ✅ Ensure AI-SOC is running: `docker ps | grep ai-soc`
+- ✅ Check AI-SOC logs: `docker logs <ai-soc-container>`
+- ✅ Verify port 8000 is exposed: `docker port <ai-soc-container>`
+
+**Issue: Wazuh integration errors**
+
+```bash
+# Check Wazuh logs
+docker exec <wazuh-manager> tail -100 /var/ossec/logs/ossec.log | grep -i integration
+
+# Restart Wazuh Manager
+docker restart <wazuh-manager>
+```
+
+### Disabling Wave 3
+
+To disable AI-SOC integration:
+
+1. Edit `mobile_demo/ossec.conf`
+2. Comment out or remove the `<integration>` block
+3. Re-run `./setup_mobile_monitoring.sh`
+4. Restart Wazuh containers
+
+### Future Enhancements
+
+**Phase 2 (Planned):**
+- 🔐 HTTPS with authentication
+- 🔄 Retry logic for failed forwards
+- ⚡ Rate limiting and batching
+- 📊 Multiple webhook endpoints
+
+**Phase 3 (Future):**
+- 🧠 Alert enrichment before forwarding
+- 🎯 Custom field mapping
+- 📈 Integration monitoring dashboard
 
 ---
 
@@ -182,13 +379,17 @@ docker exec <wazuh-manager-container> tail -f /var/ossec/logs/alerts/alerts.json
 ```
 onering_wazuh/
 ├── mobile_demo/
-│   ├── ossec.conf                      # Wazuh config with UDP 514 syslog listener
+│   ├── ossec.conf                      # Wazuh config (UDP 514 + Wave 3 integration)
 │   ├── local_decoder.xml               # Android PACKAGE_ADDED decoder
 │   ├── local_rules.xml                 # Alert rules (rule 100006)
 │   ├── forward_logcat.py               # Python script to forward Android logs
 │   ├── forward_logcat_localhost.sh     # Wrapper script for easy execution
-│   └── docs/                           # Additional documentation
+│   ├── test_wave3_e2e.sh               # Wave 3 E2E integration test (with mock endpoint)
+│   ├── mock_ai_soc_endpoint.py         # Mock AI-SOC endpoint for testing
+│   └── docs/
+│       └── WAVE3_SPECIFICATION.md      # Wave 3 technical specification
 ├── custom-logos/                       # OneRingInc branding assets
+├── setup_mobile_monitoring.sh          # Automated setup script (includes Wave 3)
 ├── rebrand_wazuh.sh                    # Dashboard rebranding script
 ├── LICENSE                             # LGPL-2.0 license
 └── README.md                           # This file
