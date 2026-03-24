@@ -359,6 +359,68 @@ To disable AI-SOC integration:
 3. Re-run `./setup_mobile_monitoring.sh`
 4. Restart Wazuh containers
 
+---
+
+### 🔧 Kind Cluster Integration (Kubernetes Ingress)
+
+If you're integrating with an AI-SOC running in a **Kind (Kubernetes in Docker) cluster**, additional configuration is required for proper Nginx Ingress routing.
+
+#### Required: Shuffle Integration Patch
+
+The Wazuh Shuffle integration must include a `Host: localhost` header for Kind's Nginx Ingress to route requests correctly.
+
+**⚠️ IMPORTANT:** This patch must be reapplied after **every Wazuh container restart**.
+
+#### Apply the Patch
+
+```bash
+# After starting or restarting Wazuh, run:
+./mobile_demo/apply_permanent_shuffle_patch.sh
+```
+
+**When to apply:**
+- ✅ After initial Wazuh setup
+- ✅ After restarting the Wazuh container
+- ✅ After Docker daemon restarts
+- ✅ After system reboots
+
+#### Verify the Patch
+
+```bash
+# Check if patch is applied
+docker exec single-node-wazuh.manager-1 grep "headers = " /var/ossec/integrations/shuffle.py
+```
+
+**Expected output:**
+```python
+headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8', 'Host': 'localhost'}
+```
+
+**If missing the `'Host': 'localhost'` part, reapply the patch.**
+
+#### Test the Integration
+
+```bash
+# Send a test alert
+echo "emulator-5554: D/BackupManagerService( 1198): Received broadcast Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.test.kind flg=0x4000010 (has extras) }" | nc -u -w1 localhost 514
+
+# Check if it reached the AI-SOC (should see HTTP 202)
+kubectl logs -n ingress-nginx -l app.kubernetes.io/component=controller --tail=5 | grep "POST /api/threats/ingest/wazuh"
+```
+
+**Expected output:**
+```
+172.20.0.5 - - [...] "POST /api/threats/ingest/wazuh HTTP/1.1" 202 ...
+```
+
+#### Automation Options
+
+To avoid manually reapplying the patch after restarts, see automation options in:
+- [`mobile_demo/PERMANENT_PATCH_GUIDE.md`](mobile_demo/PERMANENT_PATCH_GUIDE.md) - Complete patch management guide
+- [`mobile_demo/CHECKPOINT_LIVE_INTEGRATION.md`](mobile_demo/CHECKPOINT_LIVE_INTEGRATION.md) - Quick recovery reference
+
+---
+
 ### Future Enhancements
 
 **Phase 2 (Planned):**
