@@ -1,8 +1,20 @@
 # 🎯 Checkpoint: Live Wazuh → AI-SOC Integration
 
-**Date:** 2026-03-22  
-**Status:** ✅ **WORKING** - Successfully sending alerts to AI-SOC cluster  
-**Last Test:** HTTP 500 (datetime bug in AI-SOC, not Wazuh issue)
+**Date:** 2026-03-24
+**Status:** ✅ **FULLY OPERATIONAL** - E2E integration working
+**Version:** v1.1.0 (with patch management)
+**Last Test:** HTTP 202 Accepted ✅
+
+---
+
+## ⚠️ IMPORTANT: Patch Management
+
+**After any Wazuh container restart, run:**
+```bash
+./mobile_demo/apply_permanent_shuffle_patch.sh
+```
+
+This reapplies the required `Host: localhost` header patch. See `mobile_demo/PERMANENT_PATCH_GUIDE.md` for details.
 
 ---
 
