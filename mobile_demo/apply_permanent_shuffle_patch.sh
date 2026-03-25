@@ -29,33 +29,50 @@ echo ""
 # Step 2: Create patched version
 echo "Step 2: Creating patched version..."
 python3 << 'EOF'
+import re
+
 # Read the current file
 with open('/tmp/shuffle_current.py', 'r') as f:
     content = f.read()
 
-# Replace the headers line in send_msg function
+patched_count = 0
+
+# Patch 1: Replace the headers line in send_msg function
 old_headers = "headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}"
 new_headers = "headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8', 'Host': 'localhost'}"
 
 if old_headers in content:
     content = content.replace(old_headers, new_headers)
     print('✅ Patched: Added Host: localhost header')
-    patched = True
+    patched_count += 1
 elif new_headers in content:
-    print('✅ Already patched - no changes needed')
-    patched = False
+    print('✅ Host header already patched')
 else:
     print('⚠️  Warning: Could not find headers line to patch')
     exit(1)
+
+# Patch 2: Increase timeout from 10 to 30 seconds
+# Match: timeout=10 (with word boundary to avoid matching timeout=100, etc.)
+old_timeout_pattern = r'timeout=10\b'
+new_timeout = 'timeout=30'
+
+if re.search(old_timeout_pattern, content):
+    content = re.sub(old_timeout_pattern, new_timeout, content)
+    print('✅ Patched: Increased timeout from 10s to 30s')
+    patched_count += 1
+elif 'timeout=30' in content:
+    print('✅ Timeout already patched to 30s')
+else:
+    print('⚠️  Warning: Could not find timeout parameter to patch')
 
 # Write the patched file
 with open('/tmp/shuffle_patched.py', 'w') as f:
     f.write(content)
 
-if patched:
-    print('✅ Created patched shuffle.py at /tmp/shuffle_patched.py')
+if patched_count > 0:
+    print(f'✅ Created patched shuffle.py with {patched_count} change(s)')
 else:
-    print('ℹ️  Copied existing file to /tmp/shuffle_patched.py')
+    print('ℹ️  All patches already applied - copied existing file')
 EOF
 
 echo ""
@@ -81,7 +98,11 @@ echo ""
 
 # Step 6: Verify the patch
 echo "Step 6: Verifying patch..."
+echo "Headers:"
 docker exec $WAZUH_MANAGER grep "headers = " /var/ossec/integrations/shuffle.py
+echo ""
+echo "Timeout:"
+docker exec $WAZUH_MANAGER grep "timeout=" /var/ossec/integrations/shuffle.py
 echo ""
 
 echo "======================================================"
